@@ -34,12 +34,14 @@ public class Menu {
 		if(up) {
 			up = false;
 			currentOption--;
+			Sound.menuChange.play();
 			if(currentOption<0) {
 				currentOption = maxOption;
 			}
 		}
 		if(down) {
 			down = false;
+			Sound.menuChange.play();
 			currentOption++;
 			if(currentOption > maxOption) {
 				currentOption = 0;
@@ -47,6 +49,7 @@ public class Menu {
 		}
 		if(enter) {
 			enter = false;
+			Sound.menuSelect.play();
 			if(options[currentOption] == "Novo Jogo" || options[currentOption] == "Continuar") { 			
 				Game.gameState = "NORMAL";
 				pause = false;

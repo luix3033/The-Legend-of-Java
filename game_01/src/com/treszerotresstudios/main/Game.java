@@ -69,6 +69,26 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	
 	public Game() {
 		
+		Sound.musicBackground.setVolumePercent(70);
+		Sound.gameoverMusic.setVolumePercent(70);
+		Sound.menuBackground.setVolumePercent(70);
+
+		Sound.hurtEffect.setVolumePercent(70);
+		Sound.arrowThrow.setVolumePercent(70);
+
+		Sound.menuChange.setVolumePercent(70);
+		Sound.menuSelect.setVolumePercent(70);
+
+		Sound.picBow.setVolumePercent(70);
+
+		Sound.goblinHit.setVolumePercent(70);
+		Sound.goblinDeath.setVolumePercent(70);
+
+		Sound.lowLife.setVolumePercent(80);
+
+		Sound.getLife.setVolumePercent(70);
+		
+		
 		rand = new Random();
 	
 		addKeyListener(this);
@@ -125,6 +145,8 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	
 	public void tick() {
 		if(gameState.equals("NORMAL") ) {
+			Sound.menuBackground.stop();
+			Sound.musicBackground.loop();
 			this.restartGame=false;
 		
 		for(int i = 0; i< entities.size(); i++) {
@@ -145,6 +167,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 			World.restartGame(newWorld);
 			}
 		} else if (gameState.equals("GAME_OVER")) {
+			
 			this.framesGameOver++;
 			if(this.framesGameOver == 30) {
 				this.framesGameOver = 0;
@@ -163,6 +186,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 				World.restartGame(newWorld);
 			}
 		}else if(gameState == "MENU") {
+			Sound.menuBackground.loop();
 			menu.tick();
 		}
 	}
@@ -199,6 +223,8 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		g.setColor(Color.white);
 		g.drawString("Munição: " + player.arrow, 23, 50);
 		if(gameState.equals("GAME_OVER")) {
+			
+			System.out.println("oi");
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setColor(new Color(0,0,0,100));
 			g2.fillRect(0, 0, WIDTH*SCALE, HEIGHT*SCALE);
