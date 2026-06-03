@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import com.treszerotresstudios.graficos.Spritesheet;
 import com.treszerotresstudios.main.Game;
+import com.treszerotresstudios.main.Sound;
 import com.treszerotresstudios.world.Camera;
 import com.treszerotresstudios.world.World;
 
@@ -109,6 +110,15 @@ public class Player extends Entity {
 	}
 	
 	public void tick() {
+		
+		if(life <= 30) {
+			Sound.musicBackground.setVolumePercent(60);
+		    Sound.lowLife.loop();
+		} else if (life > 30) {
+			Sound.musicBackground.setVolumePercent(70);
+		    Sound.lowLife.stop();
+		}
+		
 		moved = false;
 		if(right && World.isFree((int)(x+speed),this.getY())) {
 			moved = true;
@@ -160,6 +170,7 @@ public class Player extends Entity {
 			if(hasBow && arrow >0) {
 				shoot = false;
 				arrow--;
+				Sound.arrowThrow.play();
 			shoot = false;
 			int dx = 0;
 			int dy = 0;
@@ -195,6 +206,8 @@ public class Player extends Entity {
 		
 			}
 		}
+		
+		
 		
 		if(mouseShoot) {
 			mouseShoot = false;
@@ -250,6 +263,8 @@ public class Player extends Entity {
 		}
 		if(life <=0) {
 			life = 0;
+			Sound.musicBackground.stop();
+			Sound.gameoverMusic.play();
 			Game.gameState = "GAME_OVER";
 			//gameover
 			
@@ -268,6 +283,7 @@ public class Player extends Entity {
 			if(atual instanceof Arrow) {
 				if(Entity.isColliding(this, atual)) {
 					arrow+=10;
+					Sound.picBow.play();
 					Game.entities.remove(atual);
 				}
 			}
@@ -280,6 +296,7 @@ public class Player extends Entity {
 			if(atual instanceof Lifepack) {
 				if(Entity.isColliding(this, atual)) {
 					life+=10;
+					Sound.getLife.play();
 					if(life >100)
 						life = 100;
 					Game.entities.remove(atual);
@@ -296,6 +313,7 @@ public class Player extends Entity {
 			if(atual instanceof Weapon) {
 				if(Entity.isColliding(this, atual)) {
 					hasBow = true;
+					Sound.picBow.play();
 					Game.entities.remove(atual);
 				}
 			}

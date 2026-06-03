@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.treszerotresstudios.main.Game;
+import com.treszerotresstudios.main.Sound;
 import com.treszerotresstudios.world.Camera;
 import com.treszerotresstudios.world.World;
 
@@ -116,11 +117,12 @@ public class Goblin extends Entity{
 		} else {
 			//estamos colidindo
 			if(Game.rand.nextInt(100)<10) {
+				Sound.hurtEffect.play();
 			Game.player.life-=Game.rand.nextInt(3);
 			Game.player.isDamaged = true;
 			
 			
-			System.out.println("vida: "+Game.player.life);
+			//System.out.println("vida: "+Game.player.life);
 			}
 			
 		}
@@ -136,6 +138,7 @@ public class Goblin extends Entity{
 		collidingArrow();
 		
 		if(life <=0) {
+			Sound.goblinDeath.play();
 			destroySelf();
 			return;
 		}
@@ -162,6 +165,7 @@ public class Goblin extends Entity{
 	    		if(Entity.isColliding(this, e)) {
 	    			isDamaged = true;;
 	    			life--;
+	    			Sound.goblinHit.play();
 	    			Game.arrowshoot.remove(i);
 	    			return;
 	    		}
