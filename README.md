@@ -45,16 +45,16 @@ O objetivo é recriar mecânicas clássicas dos jogos Zelda utilizando apenas Ja
   - Flechas
   - Kits de vida
 - Game Over
+- - Menu principal
+  - - Efeitos sonoros
+- Música de fundo
 
 ### 🚧 Em Desenvolvimento
 
 - Raio de detecção dos inimigos
-- Menu principal
 - Sistema de pontuação
 - Novos inimigos
 - Chefões
-- Efeitos sonoros
-- Música de fundo
 - Sistema de save
 
 ---
@@ -170,8 +170,8 @@ Durante o desenvolvimento deste jogo foram aplicados conceitos como:
 - [ ] NPCs
 - [ ] Missões
 - [ ] Boss Fight
-- [ ] Sons e músicas
-- [ ] Tela de menu
+- [x] Sons e músicas
+- [x] Tela de menu
 - [ ] Sistema de save/load
 
 ---
