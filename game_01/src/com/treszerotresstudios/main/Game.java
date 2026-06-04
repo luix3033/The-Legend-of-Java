@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import com.treszerotresstudios.entities.ArrowShoot;
@@ -79,6 +80,10 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener/
 	
 	public int[] pixels;
 	
+	public BufferedImage lightmap;
+	
+	public int[] lightMapPixels;
+	
 	//public int xx,yy;
 	
 	
@@ -117,6 +122,13 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener/
 		
 		ui = new UI();
 		image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
+		try {
+			lightmap = ImageIO.read(getClass().getResource("/lightmap.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		lightMapPixels = new int[lightmap.getWidth()*lightmap.getHeight()];
+		lightmap.getRGB(0, 0, lightmap.getWidth(),lightmap.getHeight(),lightMapPixels,0,lightmap.getWidth());
 		pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		entities = new ArrayList<Entity>();
 		goblins = new ArrayList<Goblin>();
@@ -243,7 +255,20 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener/
 	}
 	*/
 	
+	// sistema de luz
 	
+	/*
+	public void applyLight() {
+		for(int xx = 0; xx < Game.WIDTH; xx++) {
+			for(int yy = 0; yy < Game.HEIGHT; yy++) {
+				if(lightMapPixels[xx+(yy*Game.WIDTH)] == 0xffffffff) {
+					pixels[xx +(yy*Game.WIDTH)]= 0;
+				}
+			}
+		}
+	}
+	
+	*/
 	public void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs== null) {
@@ -267,6 +292,8 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener/
 			arrowshoot.get(i).render(g);
 		}
 		
+		
+		//applyLight();
 		ui.render(g);
 		/*********/
 		g.dispose();
