@@ -86,7 +86,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 
 		Sound.lowLife.setVolumePercent(80);
 
-		Sound.getLife.setVolumePercent(70);
+		Sound.getLife.setVolumePercent(50);
 		
 		
 		rand = new Random();
@@ -146,6 +146,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	public void tick() {
 		if(gameState.equals("NORMAL") ) {
 			Sound.menuBackground.stop();
+			Sound.gameoverMusic.stop();
 			Sound.musicBackground.loop();
 			this.restartGame=false;
 		
@@ -311,6 +312,10 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_Z || e.getKeyCode() == KeyEvent.VK_SPACE) {
+			player.jump = true;
+		}
+		
 		if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode()==KeyEvent.VK_RIGHT) {
 			player.right = false;
 			
