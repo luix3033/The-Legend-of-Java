@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -13,6 +14,8 @@ import java.awt.event.MouseListener;
 //import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -54,6 +57,9 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	public static Random rand;
 	
 	public UI ui;
+	
+	public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("pixelfont.ttf");
+	public Font newfont;
 	
 	private int CUR_LEVEL = 1, MAX_LEVEL = 2;
 	
@@ -111,6 +117,16 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		player = new Player(0,0,16,16,spritesheet.getSprite(292, 54, 16, 16));
 		
 		world = new World("/level1.png");
+		
+		try {
+			newfont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(16f);
+		} catch (FontFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		entities.add(player);
@@ -232,7 +248,10 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		g.drawImage(image, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
 		g.setFont(new Font("arial",Font.BOLD,17));
 		g.setColor(Color.white);
-		g.drawString("Munição: " + player.arrow, 23, 50);
+		
+		g.setFont(newfont);
+		g.drawString("FLECHAS: " + player.arrow, 23, 50);
+		g.drawString((int)Game.player.life+"/"+(int)Game.player.maxLife, 90, 28);
 		if(gameState.equals("GAME_OVER")) {
 			
 			System.out.println("oi");
