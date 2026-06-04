@@ -20,6 +20,7 @@ public class Entity {
 	
 	protected double x,y;
 	protected int width,height;
+	protected int z;
 	
 	private BufferedImage sprite;
 	
@@ -88,8 +89,10 @@ public class Entity {
 	        e2.maskw,
 	        e2.maskh
 	    );
-
-	    return e1Mask.intersects(e2Mask);
+	    if(e1Mask.intersects(e2Mask) && e1.z==e2.z) {
+	    	return true;
+	    }
+	    return false;
 	}
 	
 	public void render(Graphics g) {

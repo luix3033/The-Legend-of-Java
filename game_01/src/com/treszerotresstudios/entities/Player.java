@@ -1,5 +1,6 @@
 package com.treszerotresstudios.entities;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -42,6 +43,16 @@ public class Player extends Entity {
 	public boolean shoot = false,mouseShoot = false;
 	
 	public int mx,my;
+	
+	public boolean jump = false, isJumping = false;
+	
+	public int z = 0;
+	
+	public int jumpSpeed = 2;
+	
+	public int jumpFrames = 50, jumpCur = 0;
+	
+	public boolean jumpUp = false,jumpDown = false;
 	
 	public Player(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
@@ -111,6 +122,33 @@ public class Player extends Entity {
 	
 	public void tick() {
 		
+		if(jump) {
+			if(isJumping == false) {
+			jump = false;
+			isJumping = true;
+			jumpUp = true;
+			}
+		}
+		if(isJumping == true) {
+			
+				if(jumpUp) {
+					jumpCur+=jumpSpeed;
+				} else if(jumpDown) {
+					jumpCur-=jumpSpeed;
+					if(jumpCur<=0) {
+						isJumping = false;
+						jumpDown = false;
+						jumpUp = false;
+					}
+				}
+				z = jumpCur;
+				if( jumpCur >= jumpFrames ) {
+					jumpUp=false;
+					jumpDown=true;
+				}
+			
+		}
+		
 		if(life <= 30) {
 			Sound.musicBackground.setVolumePercent(60);
 		    Sound.lowLife.loop();
@@ -120,20 +158,20 @@ public class Player extends Entity {
 		}
 		
 		moved = false;
-		if(right && World.isFree((int)(x+speed),this.getY())) {
+		if(right && World.isFree((int)(x+speed),this.getY(),z)) {
 			moved = true;
 			dir = right_dir;
 			x+=speed;
-		}else if(left  && World.isFree((int)(x-speed),this.getY())) {
+		}else if(left  && World.isFree((int)(x-speed),this.getY(),z)) {
 			moved = true;
 			dir = left_dir;
 			x-=speed;
 		}
-		if(up && World.isFree(this.getX(),(int)(y-speed))) {
+		if(up && World.isFree(this.getX(),(int)(y-speed),z)) {
 			moved = true;
 			dir = up_dir;
 			y-=speed;
-		}else if(down && World.isFree(this.getX(),(int)(y+speed))) {
+		}else if(down && World.isFree(this.getX(),(int)(y+speed),z)) {
 			moved = true;
 			dir = down_dir;
 			y+=speed;
@@ -264,6 +302,7 @@ public class Player extends Entity {
 		if(life <=0) {
 			life = 0;
 			Sound.musicBackground.stop();
+			Sound.lowLife.stop();
 			Sound.gameoverMusic.play();
 			Game.gameState = "GAME_OVER";
 			//gameover
@@ -325,54 +364,58 @@ public class Player extends Entity {
 	public void render(Graphics g) {
 		if(!isDamaged) {
 		if(dir == right_dir) {
-		g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+		g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - z, null);
 		if(hasBow) {
-			g.drawImage(Entity.GUN_RIGHT, this.getX() - Camera.x+7, this.getY()-Camera.y+6,12,12, null);
+			g.drawImage(Entity.GUN_RIGHT, this.getX() - Camera.x+7, this.getY()-Camera.y -z+6,12,12, null);
 		}
 		}else if(dir == left_dir) {
-			g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y-z, null);
 			if(hasBow) {
-				g.drawImage(Entity.GUN_LEFT, this.getX() - Camera.x-4, this.getY()-Camera.y+6,12,12, null);
+				g.drawImage(Entity.GUN_LEFT, this.getX() - Camera.x-4, this.getY()-Camera.y-z+6,12,12, null);
 			}
 		}
 		
 		if(dir == up_dir) {
 			if(hasBow) {
-				g.drawImage(Entity.GUN_LEFT, this.getX() - Camera.x-3, this.getY()-Camera.y+6,12,12, null);
+				g.drawImage(Entity.GUN_LEFT, this.getX() - Camera.x-3, this.getY()-Camera.y-z+6,12,12, null);
 			}
-			g.drawImage(upPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			g.drawImage(upPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y-z, null);
 			}else if(dir == down_dir) {
-					g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+					g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y-z, null);
 				if(hasBow) {
-					g.drawImage(Entity.GUN_RIGHT, this.getX() - Camera.x+7, this.getY()-Camera.y+6,12,12, null);
+					g.drawImage(Entity.GUN_RIGHT, this.getX() - Camera.x+7, this.getY()-Camera.y+6-z,12,12, null);
 				}
 			}
 			//fazer dano
 		}else {
 			if(dir == right_dir) {
-				g.drawImage(playerDamageRight, this.getX() - Camera.x, this.getY() - Camera.y, null);
+				g.drawImage(playerDamageRight, this.getX() - Camera.x, this.getY() - Camera.y-z, null);
 				if(hasBow) {
-					g.drawImage(Entity.GUN_RIGHT, this.getX() - Camera.x+7, this.getY()-Camera.y+6,12,12, null);
+					g.drawImage(Entity.GUN_RIGHT, this.getX() - Camera.x+7, this.getY()-Camera.y-z+6,12,12, null);
 				}
 			}else if(dir == left_dir) {
-					g.drawImage(playerDamageLeft, this.getX() - Camera.x, this.getY() - Camera.y, null);
+					g.drawImage(playerDamageLeft, this.getX() - Camera.x, this.getY() - Camera.y-z, null);
 					if(hasBow) {
-						g.drawImage(Entity.GUN_LEFT, this.getX() - Camera.x-4, this.getY()-Camera.y+6,12,12, null);
+						g.drawImage(Entity.GUN_LEFT, this.getX() - Camera.x-4, this.getY()-Camera.y-z+6,12,12, null);
 					}
 			}
 				
 				if(dir == up_dir) {
 					if(hasBow) {
-						g.drawImage(Entity.GUN_LEFT, this.getX() - Camera.x-3, this.getY()-Camera.y+6,12,12, null);
+						g.drawImage(Entity.GUN_LEFT, this.getX() - Camera.x-3, this.getY()-Camera.y-z+6,12,12, null);
 					}
-					g.drawImage(playerDamageUp, this.getX() - Camera.x, this.getY() - Camera.y, null);
+					g.drawImage(playerDamageUp, this.getX() - Camera.x, this.getY() - Camera.y-z, null);
 					}else if(dir == down_dir) {
-						g.drawImage(playerDamageDown, this.getX()-Camera.x, this.getY()-Camera.y, null);
+						g.drawImage(playerDamageDown, this.getX()-Camera.x, this.getY()-Camera.y-z, null);
 						if(hasBow) {
-							g.drawImage(Entity.GUN_RIGHT, this.getX() - Camera.x+7, this.getY()-Camera.y+6,12,12, null);
+							g.drawImage(Entity.GUN_RIGHT, this.getX() - Camera.x+7, this.getY()-Camera.y-z+6,12,12, null);
 						}
 					}
 			
+		}
+		if(isJumping) {
+			g.setColor(Color.black);
+			g.fillOval(this.getX() - Camera.x + 2, this.getY() - Camera.y+10 , 8,8);
 		}
 		}
 	

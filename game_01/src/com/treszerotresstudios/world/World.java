@@ -61,7 +61,48 @@ public class World {
 					} else if(pixelAtual == 0xFFFFD800) {
 						//arrow
 						Game.entities.add(new Arrow(xx*16,yy*16, 16,16, Entity.ARROW_EN));
+					} else if (pixelAtual == 0xFF777777) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.TILE_FLOOR3);
+					} else if (pixelAtual == 0xFF969696) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.TILE_FLOOR2);
+					} else if (pixelAtual == 0xFF632600) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.DIRT_UP_RIGHT);
+					} else if (pixelAtual == 0xFF772D00) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.DIRT_DOWN_LEFT);
+					}else if (pixelAtual == 0xFFFF6100) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.DIRT_HORIZ);
+					} else if (pixelAtual == 0xFF7C3100) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.DIRT_VERT);
 					}
+					else if (pixelAtual == 0xFF00FFFF) {
+						tiles[xx+(yy*WIDTH)] = new RockTile(xx*16,yy*16,Tile.WATTER);
+						//PAREDE
+					}else if (pixelAtual == 0xFF10D98F) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE);
+					}else if (pixelAtual == 0xFF20A06F) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE_CORNER_LEFT);
+					}else if (pixelAtual == 0xFF00447C) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE_CORNER_RIGHT);
+					}else if (pixelAtual == 0xFF0EB575) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE_UP);
+					}else if (pixelAtual == 0xFF197F58) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE_CORNER_LEFT_UP);
+					}else if (pixelAtual == 0xFF1C8E63) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE_CORNER_RIGHT_UP);
+					}else if (pixelAtual == 0xFF0E4932) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE_RIGHT);
+					}else if (pixelAtual == 0xFF156B4A) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE_LEFT);
+					}else if (pixelAtual == 0xFF11D846) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.RIVERSIDE_ANGLE_LEFT);
+					}else if (pixelAtual == 0xFFA700AF) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.BRIDGE);
+					}else if (pixelAtual == 0xFFCD00D8) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.BRIDGE_UP);
+					}else if (pixelAtual == 0xFF65006B) {
+						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.BRIDGE_DOWN);
+					}
+					
 				}
 				
 			}
@@ -71,7 +112,8 @@ public class World {
 		}
 	}
 	
-	public static boolean isFree(int xnext, int ynext) {
+	public static boolean isFree(int xnext, int ynext, int zplayer) {
+		
 		int x1 = xnext / TILE_SIZE;
 		int y1 = ynext / TILE_SIZE;
 		
@@ -84,10 +126,15 @@ public class World {
 		int x4 = (xnext+TILE_SIZE-1) / TILE_SIZE;
 		int y4 = (ynext+TILE_SIZE-1) / TILE_SIZE;
 		
-		return !((tiles[x1 + (y1*World.WIDTH)] instanceof RockTile) ||
+		if(!((tiles[x1 + (y1*World.WIDTH)] instanceof RockTile) ||
 				(tiles[x2 + (y2*World.WIDTH)] instanceof RockTile) ||
 				(tiles[x3 + (y3*World.WIDTH)] instanceof RockTile) ||
-				(tiles[x4 + (y4*World.WIDTH)] instanceof RockTile));
+				(tiles[x4 + (y4*World.WIDTH)] instanceof RockTile))) {
+			return true;
+		} if(zplayer>0) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static void restartGame(String level) {
