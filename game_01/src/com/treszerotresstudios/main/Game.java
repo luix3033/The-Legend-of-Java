@@ -11,10 +11,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 //import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -77,6 +77,10 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener/
 	
 	public Menu menu;
 	
+	public int[] pixels;
+	
+	//public int xx,yy;
+	
 	
 	public Game() {
 		
@@ -113,6 +117,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener/
 		
 		ui = new UI();
 		image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
+		pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		entities = new ArrayList<Entity>();
 		goblins = new ArrayList<Goblin>();
 		arrowshoot = new ArrayList<ArrowShoot>();
@@ -174,7 +179,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener/
 				this.saveGame = false;
 				String[] opt1 = {"level","vida"};
 				int[] opt2 = {this.CUR_LEVEL,(int)player.life};
-				menu.saveGame(opt1,opt2,10);
+				Menu.saveGame(opt1,opt2,10);
 				System.out.println("sarvo");
 			}
 			Sound.menuBackground.stop();
@@ -223,6 +228,21 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener/
 			menu.tick();
 		}
 	}
+	/*
+	public void drawRectangleExample(int xoff, int yoff) {
+		for(int xx=0;xx<32;xx++) {
+			for(int yy=0;yy<32;yy++) {
+				int xoff = xx + xoff;
+				int yoff = yy + yoff;
+				if(xoff <0 || yoff < 0 || xoff >= WIDTH || yoff >= HEIGHT) {
+					continue;
+				}
+				pixels[xoff +(yoff*WIDTH)] = 0xff0000;
+			}
+		}
+	}
+	*/
+	
 	
 	public void render() {
 		BufferStrategy bs = this.getBufferStrategy();
