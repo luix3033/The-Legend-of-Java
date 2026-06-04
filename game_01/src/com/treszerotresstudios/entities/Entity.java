@@ -70,9 +70,10 @@ public class Entity {
 		return this.height;
 	}
 	
-	public void tick(){
-		
-		
+	public void tick(){}
+	
+	public double calculateDistance(int x1, int y1, int x2, int y2){
+	    return Math.sqrt( (x1 - x2) * (x1 - x2) +(y1 - y2) * (y1 - y2));
 	}
 	
 	public static boolean isColliding(Entity e1, Entity e2) {

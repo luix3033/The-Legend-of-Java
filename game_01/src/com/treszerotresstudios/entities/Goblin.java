@@ -88,6 +88,7 @@ public class Goblin extends Entity{
 	}
 	
 	public void tick() {
+		if(this.calculateDistance(this.getX(), this.getY(), Game.player.getX(), Game.player.getY()) < 100) {
 		if(this.isCollidingWithPlayer()==false) {
 		if((int)x < Game.player.getX() &&
 				   World.isFree((int)(x+speed), this.getY(), z) &&
@@ -126,6 +127,7 @@ public class Goblin extends Entity{
 			}
 			
 		}
+	}
 				
 					frames++;
 					if(frames == maxFrames) {
