@@ -99,7 +99,7 @@ public class World {
 						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.BRIDGE);
 					}else if (pixelAtual == 0xFFCD00D8) {
 						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.BRIDGE_UP);
-					}else if (pixelAtual == 0xFF65006B) {
+					}else if (pixelAtual == 0xFF11D846) {
 						tiles[xx+(yy*WIDTH)] = new FloorTile(xx*16,yy*16,Tile.BRIDGE_DOWN);
 					}
 					

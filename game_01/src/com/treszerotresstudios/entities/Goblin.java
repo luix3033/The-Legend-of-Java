@@ -4,17 +4,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import com.treszerotresstudios.main.Game;
 import com.treszerotresstudios.main.Sound;
+import com.treszerotresstudios.world.AStar;
 import com.treszerotresstudios.world.Camera;
+import com.treszerotresstudios.world.Vector2i;
 import com.treszerotresstudios.world.World;
 
 public class Goblin extends Entity{
 	
 	private double speed = 0.6;
 	
-	private int maskx =8, masky = 8, maskw = 10, maskh = 10;
+	
 	private int frames = 0, maxFrames = 5, index = 0, maxIndex=3;
 	
 	private int right_dir = 0,left_dir = 1, up_dir = 2, down_dir=3;
@@ -88,11 +91,32 @@ public class Goblin extends Entity{
 	}
 	
 	public void tick() {
+		depth = 0;
+		
+		maskx = 5;
+		masky = 5;
+		maskw = 8;
+		maskh = 8;
+		
+		
+		if(!isCollidingWithPlayer()) {
+			if(path == null || path.size() == 0) {
+				Vector2i start = new Vector2i((int)(x/16),(int)(y/16));
+				Vector2i end = new Vector2i((int)(Game.player.x/16),(int)(Game.player.y/16));
+				path = AStar.findPath(Game.world, start, end);
+			}
+		}else {
+			if(new Random().nextInt(100) < 5) {
+				Sound.hurtEffect.play();
+				Game.player.life-=Game.rand.nextInt(3);
+				Game.player.isDamaged = true;
+			}
+		}
+		
+		/*
 		if(this.calculateDistance(this.getX(), this.getY(), Game.player.getX(), Game.player.getY()) < 100) {
 		if(this.isCollidingWithPlayer()==false) {
-		if((int)x < Game.player.getX() &&
-				   World.isFree((int)(x+speed), this.getY(), z) &&
-				   !isColliding((int)(x+speed), this.getY())) {
+		if((int)x < Game.player.getX() && World.isFree((int)(x+speed), this.getY(), z) &&!isColliding((int)(x+speed), this.getY())) {
 				    x += speed;
 				    dir = right_dir;
 				}
@@ -103,15 +127,11 @@ public class Goblin extends Entity{
 				    dir = left_dir;
 				}
 
-				if((int)y < Game.player.getY() &&
-				   World.isFree(this.getX(), (int)(y+speed),z) &&
-				   !isColliding(this.getX(), (int)(y+speed))) {
+				if((int)y < Game.player.getY() &&  World.isFree(this.getX(), (int)(y+speed),z) &&  !isColliding(this.getX(), (int)(y+speed))) {
 				    y += speed;
 				    dir = down_dir;
 				}
-				else if((int)y > Game.player.getY() &&
-				        World.isFree(this.getX(), (int)(y-speed),z) &&
-				        !isColliding(this.getX(), (int)(y-speed))) {
+				else if((int)y > Game.player.getY() &&  World.isFree(this.getX(), (int)(y-speed),z) &&!isColliding(this.getX(), (int)(y-speed))) {
 				    y -= speed;
 				    dir = up_dir;
 				}
@@ -128,7 +148,16 @@ public class Goblin extends Entity{
 			
 		}
 	}
-				
+	*/
+		if(new Random().nextInt(100) < 90) {
+			followPath(path);
+		}
+		
+		if(new Random().nextInt(100) < 5) {
+			Vector2i start = new Vector2i((int)(x/16),(int)(y/16));
+			Vector2i end = new Vector2i((int)(Game.player.x/16),(int)(Game.player.y/16));
+			path = AStar.findPath(Game.world, start, end);
+		}
 					frames++;
 					if(frames == maxFrames) {
 						frames = 0;
@@ -183,25 +212,7 @@ public class Goblin extends Entity{
 		return goblinCurrent.intersects(player);
 	}
 	
-	public boolean isColliding(int xnext, int ynext) {
-	    Rectangle goblinCurrent = new Rectangle( xnext + maskx,ynext + masky,maskw,maskh );
-
-	    for(int i = 0; i < Game.goblins.size(); i++) {
-	        Goblin gob = Game.goblins.get(i);
-
-	        if(gob == this) {
-	            continue;
-	        }
-
-	        Rectangle targetGoblin = new Rectangle(gob.getX()+ maskx, gob.getY()+ masky,maskw,maskh);
-
-	        if(goblinCurrent.intersects(targetGoblin)) {
-	            return true;
-	        }
-	    }
-
-	    return false;
-	}
+	
 	
 	public void render(Graphics g) {
 		if(!isDamaged) {

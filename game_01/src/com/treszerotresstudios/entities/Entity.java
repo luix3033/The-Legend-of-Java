@@ -3,9 +3,13 @@ package com.treszerotresstudios.entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Comparator;
+import java.util.List;
 
 import com.treszerotresstudios.main.Game;
 import com.treszerotresstudios.world.Camera;
+import com.treszerotresstudios.world.Node;
+import com.treszerotresstudios.world.Vector2i;
 
 public class Entity {
 	
@@ -17,14 +21,31 @@ public class Entity {
 	public static BufferedImage GUN_RIGHT = Game.spritesheet.getSprite(448, 63, 16, 16);
 	public static BufferedImage GUN_LEFT = Game.spritesheet.getSprite(467, 63, 16, 16);
 	
+
+	public int depth;
 	
 	protected double x,y;
 	protected int width,height;
 	protected int z;
 	
+	protected List<Node> path;
+	
 	private BufferedImage sprite;
 	
 	public int maskx,masky,maskw,maskh;
+	
+	public static Comparator<Entity> nodeSorter = new Comparator<Entity>() {
+		
+		@Override
+		public int compare(Entity n0,Entity n1) {
+			if(n1.depth < n0.depth)
+				return +1;
+			if(n1.depth > n0.depth)
+				return -1;
+			return 0;
+		}
+		
+	};
 	
 	public Entity(int x, int y, int width, int height, BufferedImage sprite) {
 		this.x = x;
@@ -76,24 +97,58 @@ public class Entity {
 	    return Math.sqrt( (x1 - x2) * (x1 - x2) +(y1 - y2) * (y1 - y2));
 	}
 	
-	public static boolean isColliding(Entity e1, Entity e2) {
-	    Rectangle e1Mask = new Rectangle(
-	        e1.getX() + e1.maskx,
-	        e1.getY() + e1.masky,
-	        e1.maskw,
-	        e1.maskh
-	    );
+	public boolean isColliding(int xnext, int ynext) {
+	    Rectangle goblinCurrent = new Rectangle( xnext + maskx,ynext + masky,maskw,maskh );
 
-	    Rectangle e2Mask = new Rectangle(
-	        e2.getX() + e2.maskx,
-	        e2.getY() + e2.masky,
-	        e2.maskw,
-	        e2.maskh
-	    );
-	    if(e1Mask.intersects(e2Mask) && e1.z==e2.z) {
-	    	return true;
+	    for(int i = 0; i < Game.goblins.size(); i++) {
+	        Goblin gob = Game.goblins.get(i);
+
+	        if(gob == this) {
+	            continue;
+	        }
+
+	        Rectangle targetGoblin = new Rectangle(gob.getX()+ maskx, gob.getY()+ masky,maskw,maskh);
+
+	        if(goblinCurrent.intersects(targetGoblin)) {
+	            return true;
+	        }
 	    }
+
 	    return false;
+	}
+	
+	public void followPath(List<Node> path) {
+		if(path != null) {
+			if(path.size() > 0) {
+				Vector2i target = path.get(path.size() -1).tile;
+				//xprev = x;
+				//yprev = y;
+				if(x < target.x * 16 ) {
+					x++;
+				}else if(x > target.x * 16 ){
+					x--;
+				} 
+				if (y < target.y * 16 ) {
+					y++;
+				} else if(y > target.y*16) {
+					y--;
+				}
+				
+				if(x == target.x *16 && y == target.y * 16) {
+					path.remove(path.size() - 1);
+				}
+				
+				
+				
+			}
+		}
+	}
+	
+	public static boolean isColliding(Entity e1, Entity e2) {
+	    Rectangle e1Mask = new Rectangle(e1.getX() + e1.maskx,e1.getY() + e1.masky, e1.maskw,e1.maskh);
+
+	    Rectangle e2Mask = new Rectangle(  e2.getX() + e2.maskx,e2.getY() + e2.masky, e2.maskw,e2.maskh);
+	    return e1Mask.intersects(e2Mask);
 	}
 	
 	public void render(Graphics g) {
